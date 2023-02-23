@@ -33,8 +33,7 @@
         SELECT *
         FROM posts A
                  LEFT JOIN categorys B ON A.category_id = B.category_id
-        ORDER BY post_id DESC
-        LIMIT #{pageNumber}, 10;
+        ORDER BY post_id DESC LIMIT #{pageNumber}, 10;
     </select>
 
     <select id="getPostCount" resultType="int">

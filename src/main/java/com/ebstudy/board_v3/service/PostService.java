@@ -32,14 +32,11 @@ public class PostService {
 
         int totalPostCount = boardMapper.getPostCount();
 
-
-        // 페이징에 필요한 변수 값 계산
         HashMap<String, Integer> pagingValues = calPagingValues(totalPostCount, pageNumber);
-
-        // 현재 페이지에 대한 게시글 리스트 저장
         List<CategoryDTO> categoryList = boardMapper.getCategoryList();
-        // 제목 길이
-        List<PostDTO> postList = transDataFormat(boardMapper.getPostList(pagingValues.get("currentPage")));
+        // 가져올 게시글의 개수를 지정, ex) 15개의 게시글이 있다면 1페이지는 10개, 2페이지는 5개를 가져오도록 함
+        int maximumPostCount = (pageNumber - 1) * 10;
+        List<PostDTO> postList = transDataFormat(boardMapper.getPostList(maximumPostCount));
 
         // TODO: fileFlagList를 사용하면 타임리프에서 이를 체크해야 하기 때문에 서비스 계층에서 이를 dto의 fileFlag 필드에 넣기
         // 현재 게시글 리스트별로 파일 소유 여부를 확인
