@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html>
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, inital-scale=1">
+
+    <title>게시판 목록</title>
+    <!--    bootstrap, jquery-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="http://code.jquery.com/ui/1.8.18/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.8.18/themes/base/jquery-ui.css" type="text/css"/>
+    <link rel="stylesheet" href="/webjars/bootstrap/5.1.3/css/bootstrap.css">
+</head>
+<body>
+<div class="container">
+    <h1>게시판 - 목록</h1><br>
+</div>
+<div class="container">
+    <form class="form-inline">
+        <div class="input-group-sm">
+            등록일
+
+            <input name="startDate" class="form-control-sm" type="date" required/>
+            <input name="endDate" class="form-control-sm" type="date" required/>
+
+            <select class="form-select-sm" name="category" required>
+                <option value="all">전체 카테고리</option>
+                <option th:each="category : ${categoryList}" th:value="${category.categoryId}"
+                        th:text="${category.category}"></option>
+            </select>
+            <input type="search" name="keyword">
+            <input type="submit" value="검색">
+        </div>
+    </form>
+</div>
+<br>
+<div class="container">
+    <p th:text="|총 ${totalPostCount} 건|"></p>
+</div>
+
+
+<div class="container">
+    <table class="table table-hover" style="text-align: center; font-size: 12px">
+        <thead>
+        <tr>
+            <th class="w-auto" style="text-align: center;">카테고리</th>
+            <th class="w-auto" style="text-align: center;">&nbsp</th>
+            <th class="w-auto" style="text-align: center;">제목</th>
+            <th class="w-auto" style="text-align: center;">작성자</th>
+            <th class="w-auto" style="text-align: center;">조회수</th>
+            <th class="w-auto" style="text-align: center;">등록 일시</th>
+            <th class="w-auto" style="text-align: center;">수정 일시</th>
+        </tr>
+        </thead>
+        <tbody>
+
+        <tr th:each="post : ${postList}">
+            <td th:text="${post.category}"></td>
+
+<!--            <td th:if="${postFileFlagList.get(${post.postId})}" th:text="F"></td>-->
+<!--            <td th:unless="${postFileFlagList.get(${post.postId})}" th:text=" "></td>-->
+            <td>&nbsp;</td>
+
+            <td class="d-flex justify-content-start"><a th:href="@{/boards/free/view/{postId}(postId = ${post.postId})}">[[${post.title}]]</a></td>
+            <td>[[${post.author}]]</td>
+            <td>[[${post.hits}]]</td>
+            <td>[[${post.createdDate}]]</td>
+            <td>[[${post.modifiedDate}]]</td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div class="d-flex justify-content-center">
+    <ul class="pagination">
+    </ul>
+</div>
+<div class="d-flex justify-content-end">
+    <button class="btn btn-secondary" onclick="location.href='write'">등록</button>
+</div>
+<script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
+<script src="/webjars/bootstrap/5.1.3/js/bootstrap.js"></script>
+<script src="/webjars/popper.js/2.9.3/umd/popper.min.js"></script>
+</body>
+</html>

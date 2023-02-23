@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- namespace : package + classname -->
+<mapper namespace="com.ebstudy.board_v3.repository.BoardMapper">
+    <resultMap type="com.ebstudy.board_v3.dto.PostDTO" id="mapPostDTO">
+        <result property="postId" column="post_id"/>
+        <result property="categoryId" column="category_id"/>
+        <result property="createdDate" column="created_date"/>
+        <result property="modifiedDate" column="modified_date"/>
+    </resultMap>
+
+    <resultMap id="mapCategoryDTO" type="com.ebstudy.board_v3.dto.CategoryDTO">
+        <result property="categoryId" column="category_id"/>
+    </resultMap>
+
+
+    <resultMap id="mapFileDTO" type="com.ebstudy.board_v3.dto.FileDTO">
+        <result property="postId" column="post_id"/>
+        <result property="fileId" column="file_id"/>
+        <result property="fileName" column="file_name"/>
+        <result property="fileRealName" column="file_realname"/>
+    </resultMap>
+
+    <resultMap id="mapCommentDTO" type="com.ebstudy.board_v3.dto.CommentDTO">
+        <result property="postId" column="post_id"/>
+        <result property="createdDate" column="created_date"/>
+    </resultMap>
+
+    <!--    PostDAO가 사용하는 부분-->
+    <select id="getPostList" parameterType="int" resultType="com.ebstudy.board_v3.dto.PostDTO"
+            resultMap="mapPostDTO">
+        SELECT *
+        FROM posts A
+                 LEFT JOIN categorys B ON A.category_id = B.category_id
+        ORDER BY post_id DESC
+        LIMIT #{pageNumber}, 10;
+    </select>
+
+    <select id="getPostCount" resultType="int">
+        SELECT COUNT(post_id)
+        FROM posts;
+    </select>
+
+    <select id="getPost" parameterType="long" resultType="com.ebstudy.board_v3.dto.PostDTO"
+            resultMap="mapPostDTO">
+        SELECT *
+        FROM posts A
+                 LEFT JOIN categorys B ON A.category_id = B.category_id
+        WHERE post_id = #{postId};
+    </select>
+
+    <select id="getCategoryList" resultType="com.ebstudy.board_v3.dto.CategoryDTO"
+            resultMap="mapCategoryDTO">
+        SELECT *
+        FROM categorys;
+    </select>
+
+    <!--  useGeneratedKeys의 keyProperty는 dto에 담겨 반환되므로 db PK에 해당하는 dto의 필드명을 써야 한다.   -->
+    <insert id="savePost" parameterType="com.ebstudy.board_v3.dto.PostDTO" useGeneratedKeys="true"
+            keyProperty="postId">
+        INSERT INTO posts(title, category_id, author, content, passwd, created_date)
+        VALUES (#{title}, #{categoryId}, #{author}, #{content}, #{passwd}, #{createdDate});
+    </insert>
+
+    <update id="increaseHits" parameterType="long">
+        UPDATE posts
+        SET hits = hits + 1
+        WHERE post_id = #{postId};
+    </update>
+
+    <!--    FileDAO가 사용하는 부분-->
+    <insert id="saveFile" parameterType="com.ebstudy.board_v3.dto.FileDTO">
+        INSERT INTO files(file_name, file_realname, post_id)
+        VALUES (#{fileName}, #{fileRealName}, #{postId});
+    </insert>
+
+    <select id="getFileList" parameterType="long" resultType="com.ebstudy.board_v3.dto.FileDTO"
+            resultMap="mapFileDTO">
+        SELECT *
+        FROM files
+        WHERE post_id = #{postId};
+    </select>
+
+    <select id="checkFileExistence" parameterType="long" resultType="boolean">
+        SELECT EXISTS
+                   (SELECT 1
+                    FROM files
+                    WHERE post_id = #{postId})
+    </select>
+
+    <!--    CommentDAO가 사용하는 부분-->
+    <select id="getCommentList" parameterType="long" resultType="com.ebstudy.board_v3.dto.CommentDTO"
+            resultMap="mapCommentDTO">
+        SELECT *
+        FROM comments
+        WHERE post_id = #{postId}
+        ORDER BY created_date DESC;
+    </select>
+
+    <insert id="saveComment" parameterType="com.ebstudy.board_v3.dto.CommentDTO">
+        INSERT INTO comments(comment, created_date, post_id)
+        VALUES (#{comment}, #{createdDate}, #{postId});
+    </insert>
+</mapper>
+
