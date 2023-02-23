@@ -9,6 +9,6 @@ import java.time.LocalDateTime;
 @Getter @Setter @ToString
 public class CommentDTO {
     private Long postId;
-    private LocalDateTime createdDate;
+    private String createdDate;
     private String comment;
 }
