@@ -73,8 +73,16 @@
 </div>
 <div class="d-flex justify-content-center">
     <ul class="pagination">
+        <li class="page-item" th:if="${pagingValues['startPage']} > 1"><a class="page-link" th:href="@{/boards/free/list/{pageNumber}(pageNumber = 1)}">처음</a> </li>
+        <li class="page-item" th:if="${pagingValues['currentPage']} > 1"><a class="page-link" th:href="@{/boards/free/list/{pageNumber}(pageNumber = ${pagingValues['currentPage']} - 1)}">이전</a> </li>
+        <th:block th:each="i : ${#numbers.sequence(pagingValues['startPage'], pagingValues['endPage'])}">
+            <li class="page-item" ><a class="page-link" th:href="@{/boards/free/list/{pageNumber}(pageNumber = ${i})}">[[${i}]]</a> </li>
+        </th:block>
+        <li class="page-item" th:if="${pagingValues['currentPage']} < ${pagingValues['totalPage']}"><a class="page-link" th:href="@{/boards/free/list/{pageNumber}(pageNumber = ${pagingValues['currentPage']} + 1)}">다음</a> </li>
+        <li class="page-item" th:if="${pagingValues['endPage']} < ${pagingValues['totalPage']}"><a class="page-link" th:href="@{/boards/free/list/{pageNumber}(pageNumber = ${pagingValues['totalPage']})}">끝</a> </li>
     </ul>
 </div>
+
 <div class="d-flex justify-content-end">
     <button class="btn btn-secondary" onclick="location.href='write'">등록</button>
 </div>
