@@ -4,6 +4,7 @@ import com.ebstudy.board_v3.service.CommentService;
 import com.ebstudy.board_v3.service.FileService;
 import com.ebstudy.board_v3.service.PostService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 
 @Controller
+@Slf4j
 @RequiredArgsConstructor
 @RequestMapping(value = "/boards/free")
 public class BoardController {
@@ -29,12 +31,11 @@ public class BoardController {
     public ModelAndView getPost(@PathVariable(required = false) Long postId) {
 
         ModelAndView mv = postService.getPost(postId);
-        System.out.println("getpost");
-        mv.addObject("fileList", fileService.getFileList(postId));
-        System.out.println("getfilelist");
-        mv.addObject("commentList", commentService.getCommentList(postId));
-        System.out.println("getcommentlist");
-
+        if (!mv.getViewName().startsWith("redirect")) {
+            mv.addObject("fileList", fileService.getFileList(postId));
+            mv.addObject("commentList", commentService.getCommentList(postId));
+            log.info("getPost 정상 수행에 따른 파일 리스트 및 댓글 리스트 로딩 완료");
+        }
         return mv;
     }
 }

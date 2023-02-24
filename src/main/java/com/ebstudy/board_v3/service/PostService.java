@@ -4,6 +4,7 @@ import com.ebstudy.board_v3.dto.CategoryDTO;
 import com.ebstudy.board_v3.dto.PostDTO;
 import com.ebstudy.board_v3.repository.BoardMapper;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -14,6 +15,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class PostService {
 
@@ -49,6 +51,11 @@ public class PostService {
         return mv;
     }
 
+    /**
+     *
+     * @param postId
+     * @return 게시글 데이터와
+     */
     public ModelAndView getPost(Long postId) {
 
         // TODO: 로그 기능 별도로 사용하기
@@ -57,7 +64,8 @@ public class PostService {
 
         // null, 0, ""은 list 페이지로 리다이렉트
         if ("0".equals(postId) || "".equals(postId) || postId == null) {
-            mv.setViewName("redirect:/list");
+            mv.setViewName("redirect:/boards/free/list");
+            log.info("파라미터 postId값이 유효하지 않아 /list 리다이렉트됨");
             return mv;
         }
 
@@ -72,6 +80,8 @@ public class PostService {
 
         return mv;
     }
+
+
 
     /**
      * 페이징에 필요한 변수값과 현재 페이지에 잘못된 값이 입력된 경우 이를 보정하는 메소드
@@ -142,7 +152,7 @@ public class PostService {
         }
         return result;
     }
-    
+
     private PostDTO convertPostDateFormat(PostDTO post) {
 
         String createdDate = post.getCreatedDate();
