@@ -57,9 +57,8 @@
         <tr th:each="post : ${postList}">
             <td th:text="${post.category}"></td>
 
-<!--            <td th:if="${postFileFlagList.get(${post.postId})}" th:text="F"></td>-->
-<!--            <td th:unless="${postFileFlagList.get(${post.postId})}" th:text=" "></td>-->
-            <td>&nbsp;</td>
+            <td th:if="${post.fileFlag == true}">F</td>
+            <td th:unless="${post.fileFlag == true}">&nbsp;</td>
 
             <td class="d-flex justify-content-start"><a th:href="@{/boards/free/view/{postId}(postId = ${post.postId})}">[[${post.title}]]</a></td>
             <td>[[${post.author}]]</td>
@@ -83,7 +82,7 @@
 </div>
 
 <div class="d-flex justify-content-end">
-    <button class="btn btn-secondary" onclick="location.href='write'">등록</button>
+    <button class="btn btn-secondary" onclick="location.href='/boards/free/write'">등록</button>
 </div>
 <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.1.3/js/bootstrap.js"></script>

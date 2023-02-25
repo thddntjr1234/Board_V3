@@ -24,16 +24,16 @@
         <span style="font-size: 20px;">[[${post.category}]]    [[${post.title}]]</span>
         <span class="float-end">조회수: [[${post.hits}]]</span>
     </div>
-<!--    <br>-->
+    <br>
     <div class="container">
-        <p class="text-md-start" style="font-size: 14px;">[[${post.title}]]
+        <p class="text-md-start" style="font-size: 14px;">[(${post.content})]
         </p>
     </div>
     <br>
     <div class="container">
 <!--        <div><a href="download(32)"></a></div>-->
         <th:block th:each="file : ${fileList}">
-            <div><a th:href="@{#}">[[${file.fileRealName}]]</a> </div>
+            <div><a th:href="@{/boards/free/file/{fileName}(fileName = ${file.fileName}, fileRealName = ${file.fileRealName})}" >[[${file.fileRealName}]]</a> </div>
         </th:block>
     </div>
 </div>
@@ -54,7 +54,8 @@
             <textarea class="form-control border border-secondary" rows="2" name="comment"></textarea>
             <div class="d-flex justify-content-end">
                 <button class="btn btn-primary d-flex justify-content-sm-end" type="button"
-                        onclick="saveComment(${postId})">등록
+                        th:postId="${post.postId}"
+                        th:onclick="saveComment(this.getAttribute('postId'))">등록
                 </button>
             </div>
         </form>
@@ -68,49 +69,6 @@
 <script src="/webjars/jquery/3.3.1/jquery.min.js"></script>
 <script src="/webjars/bootstrap/5.1.3/js/bootstrap.min.js"></script>
 <script type="text/javascript">
-    function DownloadFile(fileName) {
-        //Set the File URL.
-        var url = "/files/" + fileName;
-
-        console.log("url: ", url);
-        $.ajax({
-            url: url,
-            cache: false,
-            xhr: function () {
-                var xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function () {
-                    if (xhr.readyState == 2) {
-                        if (xhr.status == 200) {
-                            xhr.responseType = "blob";
-                        } else {
-                            xhr.responseType = "text";
-                        }
-                    }
-                };
-                return xhr;
-            },
-            success: function (data) {
-                //Convert the Byte Data to BLOB object.
-                var blob = new Blob([data], {type: "application/octetstream"});
-
-                //Check the Browser type and download the File.
-                var isIE = false || !!document.documentMode;
-                if (isIE) {
-                    window.navigator.msSaveBlob(blob, fileName);
-                } else {
-                    var url = window.URL || window.webkitURL;
-                    link = url.createObjectURL(blob);
-                    var a = $("<a />");
-                    a.attr("download", fileName);
-                    a.attr("href", link);
-                    $("body").append(a);
-                    a[0].click();
-                    $("body").remove(a);
-                }
-            }
-        });
-    };
-
     function saveComment(postId) {
 
         let formData = $("#commentForm").serialize();
@@ -121,11 +79,12 @@
             url: "/boards/free/comment",
             data: formData,
             error: function (e) {
+                e.data.redirectUri
                 alert("전송 실패", e);
             },
             success: function () {
                 alert("댓글 작성 성공");
-                location.href = '/boards/free/view?postId=' + postId;
+                location.href = '/boards/free/view/' + postId;
             }
         });
     }
