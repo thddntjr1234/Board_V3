@@ -10,4 +10,6 @@ public class FileDTO {
     private Long fileId;
     private String fileName;
     private String fileRealName;
+    private String extension;
+    private Long size;
 }
