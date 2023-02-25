@@ -12,7 +12,7 @@ import java.util.List;
 @Mapper // SqlSession을 만들고 Mapper를 등록할 필요가 없이 이 어노테이션으로 해결 가능
 public interface BoardMapper {
 
-    List<PostDTO> getPostList(int maximumPostCount);
+    List<PostDTO> getPostList(int startPostNumber);
 
     int getPostCount();
 

@@ -33,14 +33,14 @@
         SELECT *
         FROM posts A
                  LEFT JOIN categorys B ON A.category_id = B.category_id
-        ORDER BY post_id DESC LIMIT #{pageNumber}, 10;
+        ORDER BY post_id DESC LIMIT #{startPostNumber}, 10;
     </select>
 
     <select id="getPostCount" resultType="int">
         SELECT COUNT(post_id)
         FROM posts;
     </select>
-
+    <!--CDATA를 쓰면 sql 안에서 < >같은 문자를 써도 xml코드로 인식하지 않는다-->
     <select id="getPost" parameterType="long" resultType="com.ebstudy.board_v3.dto.PostDTO"
             resultMap="mapPostDTO">
         SELECT *
@@ -70,8 +70,8 @@
 
     <!--    FileDAO가 사용하는 부분-->
     <insert id="saveFile" parameterType="com.ebstudy.board_v3.dto.FileDTO">
-        INSERT INTO files(file_name, file_realname, post_id)
-        VALUES (#{fileName}, #{fileRealName}, #{postId});
+        INSERT INTO files(file_name, file_realname, post_id, extension, size)
+        VALUES (#{fileName}, #{fileRealName}, #{postId}, #{extension}, ${size});
     </insert>
 
     <select id="getFileList" parameterType="long" resultType="com.ebstudy.board_v3.dto.FileDTO"
