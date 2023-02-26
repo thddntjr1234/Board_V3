@@ -37,7 +37,7 @@ public class PostService {
         // 가져올 게시글의 개수를 지정, ex) 15개의 게시글이 있다면 1페이지는 10개, 2페이지는 5개를 가져오도록 함
         int startPostNumber = pagingValues.get("startPostNumber");
         //List<PostDTO> postList = postServiceUtil.convertPostListData(boardMapper.getPostList(startPostNumber));
-        // TODO: postList를 단건으로 convert하도록 메소드를 수정
+        // TODO: 2/25 postList를 단건으로 convert하도록 메소드를 수정
         List<PostDTO> postList = postServiceUtil.convertPostListData(boardMapper.getPostList(startPostNumber));
         List<PostDTO> sourcePostList = boardMapper.getPostList(startPostNumber);
 //        sourcePostList.forEach((post)=>{
@@ -94,5 +94,9 @@ public class PostService {
         post.setCreatedDate(String.valueOf(LocalDateTime.now()));
 
         boardMapper.savePost(post);
+    }
+
+    public void increaseHits(Long postId) {
+        boardMapper.increaseHits(postId);
     }
 }

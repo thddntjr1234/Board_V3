@@ -54,7 +54,7 @@ public class PostController {
 
         // TODO: 2/25 service에서 modelandview를 반환하게 하지 말고 재사용이 가능하도록 DTO를 반환하게 해야 한다
         PostDTO post = postService.getPost(postId);
-//        postService.increaseHits(postId);
+        postService.increaseHits(post.getPostId());
 
         mv.addObject("post", post);
         mv.setViewName("view");
