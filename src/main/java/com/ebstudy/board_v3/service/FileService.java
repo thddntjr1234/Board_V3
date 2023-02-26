@@ -4,6 +4,7 @@ import com.ebstudy.board_v3.dto.FileDTO;
 import com.ebstudy.board_v3.repository.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.ContentDisposition;
@@ -29,6 +30,8 @@ public class FileService {
 
     private final BoardMapper boardMapper;
 
+    @Value("${spring.servlet.multipart.location}")
+    String basicPath;
 
     /**
      * 파일 리스트를 가져오는 메소드
@@ -78,7 +81,10 @@ public class FileService {
     public ResponseEntity<Resource> downloadFile(String fileName, String fileRealName) {
 
         // TODO: 2/25 path는 프로퍼티에서 관리(개발 환경에 따라 달라질 수 있기 때문에)
-        String requestPath = "/Users/wooseok/Desktop/file_storage/" + fileName;
+
+
+        String requestPath = basicPath + fileName;
+        log.info("requestPath : " + requestPath);
 
         try {
             Path filePath = Paths.get(requestPath);
