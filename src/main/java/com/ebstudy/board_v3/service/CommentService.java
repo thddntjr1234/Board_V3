@@ -4,7 +4,6 @@ import com.ebstudy.board_v3.dto.CommentDTO;
 import com.ebstudy.board_v3.repository.BoardMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.jetbrains.annotations.Nullable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

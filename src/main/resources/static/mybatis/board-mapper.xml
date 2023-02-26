@@ -14,7 +14,6 @@
         <result property="categoryId" column="category_id"/>
     </resultMap>
 
-
     <resultMap id="mapFileDTO" type="com.ebstudy.board_v3.dto.FileDTO">
         <result property="postId" column="post_id"/>
         <result property="fileId" column="file_id"/>
@@ -27,7 +26,7 @@
         <result property="createdDate" column="created_date"/>
     </resultMap>
 
-    <!--    PostDAO가 사용하는 부분-->
+    <!--TODO: 각 sql 메소드마다 주석 붙이기-->
     <select id="getPostList" parameterType="int" resultType="com.ebstudy.board_v3.dto.PostDTO"
             resultMap="mapPostDTO">
         SELECT *
