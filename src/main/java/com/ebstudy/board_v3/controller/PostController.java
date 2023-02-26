@@ -1,5 +1,7 @@
 package com.ebstudy.board_v3.controller;
 
+import com.ebstudy.board_v3.dto.CategoryDTO;
+import com.ebstudy.board_v3.dto.PaginationDTO;
 import com.ebstudy.board_v3.dto.PostDTO;
 import com.ebstudy.board_v3.service.CommentService;
 import com.ebstudy.board_v3.service.FileService;
@@ -11,6 +13,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+
+import java.util.List;
 
 @Controller
 @Slf4j
@@ -30,8 +34,18 @@ public class PostController {
     @GetMapping(value = {"/list/{pageNumber}", "/list"})
     public ModelAndView getPostList(@PathVariable(required = false) Integer pageNumber) {
 
+        List<CategoryDTO> categoryList = postService.getCategoryList();
+        PaginationDTO pagingValues = postService.getPaginationValues(pageNumber);
+        List<PostDTO> postList = postService.getPostList(pageNumber);
+
+        ModelAndView mv = new ModelAndView("list");
+
+        mv.addObject("pagingValues", pagingValues);
+        mv.addObject("categoryList", categoryList);
+        mv.addObject("postList", postList);
+
         // TODO: 전역 에러 핸들러 쓸 필요가 있다.(exception을 최종적으로 서버에서 뱉을 때 그 에러를 그대로 페이지에 표시하지 않고 이를 캐치해서 처리해서 뱉을 수 있도록 하는거)
-        return postService.getPostList(pageNumber);
+        return mv;
     }
 
     /**
@@ -52,7 +66,6 @@ public class PostController {
             return mv;
         }
 
-        // TODO: 2/25 service에서 modelandview를 반환하게 하지 말고 재사용이 가능하도록 DTO를 반환하게 해야 한다
         PostDTO post = postService.getPost(postId);
         postService.increaseHits(post.getPostId());
 
@@ -74,7 +87,11 @@ public class PostController {
     @GetMapping("/write")
     public ModelAndView getWriteForm() {
 
-        ModelAndView mv = postService.getWriteForm();
+        List<CategoryDTO> categoryList = postService.getCategoryList();
+
+        ModelAndView mv = new ModelAndView("write-form");
+        mv.addObject("categoryList", categoryList);
+
         return mv;
     }
 

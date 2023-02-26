@@ -1,5 +1,6 @@
 package com.ebstudy.board_v3.util;
 
+import com.ebstudy.board_v3.dto.PaginationDTO;
 import com.ebstudy.board_v3.dto.PostDTO;
 import com.ebstudy.board_v3.repository.BoardMapper;
 import lombok.RequiredArgsConstructor;
@@ -11,14 +12,10 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class PostServiceUtil {
-    private final BoardMapper boardMapper;
 
     /**
      * 페이징에 필요한 변수값과 현재 페이지에 잘못된 값이 입력된 경우 이를 보정하는 메소드
@@ -27,9 +24,8 @@ public class PostServiceUtil {
      * @param pageNumber     입력받은 요청 페이지 번호
      * @return 페이징에 필요한 시작페이지와 끝 페이지 값과 보정된 요청 페이지 값, 총 페이지 값(끝으로 이동 시 사용), DB LIMIT 시작값
      */
-    public HashMap<String, Integer> calPagingValues(int totalPostCount, Integer pageNumber) {
+    public PaginationDTO calPagingValues(int totalPostCount, Integer pageNumber) {
         // TODO: 2/25 검색조건 추가시 pagination 로직 안에 검색조건 포함해서 넣기
-        HashMap<String, Integer> values = new HashMap<>();
 
         int totalPage = totalPostCount / 10;
         if (totalPostCount % 10 > 0) {
@@ -52,26 +48,25 @@ public class PostServiceUtil {
             endPage = totalPage;
         }
 
-        values.put("startPage", startPage);
-        values.put("endPage", endPage);
-        values.put("currentPage", currentPage);
-        values.put("totalPage", totalPage);
-        values.put("startPostNumber", startPostNumber);
+        PaginationDTO pagingValues = PaginationDTO.builder()
+                .startPage(startPage)
+                .endPage(endPage)
+                .currentPage(currentPage)
+                .totalPage(totalPage)
+                .startPostNumber(startPostNumber)
+                .totalPostCount(totalPostCount)
+                .build();
 
-        return values;
+        return pagingValues;
     }
 
     /**
      * getPostList()시 날짜 변환과 수정일이 공란일 시 "-"을 추가하고 각 포스트마다 파일 보유 여부를 추가하는 메소드
      *
-     * @param postList 게시글 리스트
+     * @param post 게시글
      * @return 수정된 파라미터값(게시글 리스트)을 반환
      */
-    public List<PostDTO> convertPostListData(List<PostDTO> postList) {
-
-        List<PostDTO> result = new LinkedList<PostDTO>();
-
-        for (PostDTO post : postList) {
+    public PostDTO convertToListFormat(PostDTO post) {
 
             post = convertPostDataFormat(post);
 
@@ -81,16 +76,7 @@ public class PostServiceUtil {
                 post.setTitle(post.getTitle().substring(0, 80) + "...");
             }
 
-            // 현재 게시글의 파일 여부 확인시 fileFlag 설정
-            long postId = post.getPostId();
-            // TODO: 파라미터로 interface(ex: externalLogic) 넣거나, 리스트가 아닌 단건을 foreach로 처리하면서 그 사이에 checkFileExistence를 넣어주는 방식으로 리팩토링
-            if (boardMapper.checkFileExistence(postId)) {
-                post.setFileFlag(true);
-            }
-
-            result.add(post);
-        }
-        return result;
+        return post;
     }
 
     /**
