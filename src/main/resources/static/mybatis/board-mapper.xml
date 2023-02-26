@@ -26,7 +26,7 @@
         <result property="createdDate" column="created_date"/>
     </resultMap>
 
-    <!--TODO: 각 sql 메소드마다 주석 붙이기-->
+    <!--List<PostDTO> 형식으로 startPostNumber 번째 게시글부터 10개를 뽑아 리스트를 반환-->
     <select id="getPostList" parameterType="int" resultType="com.ebstudy.board_v3.dto.PostDTO"
             resultMap="mapPostDTO">
         SELECT *
@@ -34,12 +34,13 @@
                  LEFT JOIN categorys B ON A.category_id = B.category_id
         ORDER BY post_id DESC LIMIT #{startPostNumber}, 10;
     </select>
-
+    <!--현재 데이터베이스에 존재하는 게시글의 총 개수를 반환-->
     <select id="getPostCount" resultType="int">
         SELECT COUNT(post_id)
         FROM posts;
     </select>
     <!--CDATA를 쓰면 sql 안에서 < >같은 문자를 써도 xml코드로 인식하지 않는다-->
+    <!--요청한 postId에 해당하는 게시글을 반환-->
     <select id="getPost" parameterType="long" resultType="com.ebstudy.board_v3.dto.PostDTO"
             resultMap="mapPostDTO">
         SELECT *
@@ -47,7 +48,7 @@
                  LEFT JOIN categorys B ON A.category_id = B.category_id
         WHERE post_id = #{postId};
     </select>
-
+    <!--카테고리 리스트를 반환-->
     <select id="getCategoryList" resultType="com.ebstudy.board_v3.dto.CategoryDTO"
             resultMap="mapCategoryDTO">
         SELECT *
@@ -55,12 +56,13 @@
     </select>
 
     <!--  useGeneratedKeys의 keyProperty는 dto에 담겨 반환되므로 db PK에 해당하는 dto의 필드명을 써야 한다.   -->
+    <!--PostDTO 객체에 담긴 게시글 값을 저장-->
     <insert id="savePost" parameterType="com.ebstudy.board_v3.dto.PostDTO" useGeneratedKeys="true"
             keyProperty="postId">
         INSERT INTO posts(title, category_id, author, content, passwd, created_date)
         VALUES (#{title}, #{categoryId}, #{author}, #{content}, #{passwd}, #{createdDate});
     </insert>
-
+    <!--postId값을 가진 열의 조회수를 증가-->
     <update id="increaseHits" parameterType="long">
         UPDATE posts
         SET hits = hits + 1
@@ -68,18 +70,19 @@
     </update>
 
     <!--    FileDAO가 사용하는 부분-->
+    <!--게시글 저장 시 첨부한 파일의 정보를 저장-->
     <insert id="saveFile" parameterType="com.ebstudy.board_v3.dto.FileDTO">
         INSERT INTO files(file_name, file_realname, post_id, extension, size)
         VALUES (#{fileName}, #{fileRealName}, #{postId}, #{extension}, ${size});
     </insert>
-
+    <!--postId값에 해당하는 파일의 목록을 반환-->
     <select id="getFileList" parameterType="long" resultType="com.ebstudy.board_v3.dto.FileDTO"
             resultMap="mapFileDTO">
         SELECT *
         FROM files
         WHERE post_id = #{postId};
     </select>
-
+    <!--해당 postId을 가진 파일이 하나라도 존재하는지 여부를 반환-->
     <select id="checkFileExistence" parameterType="long" resultType="boolean">
         SELECT EXISTS
                    (SELECT 1
@@ -88,6 +91,7 @@
     </select>
 
     <!--    CommentDAO가 사용하는 부분-->
+    <!--postId값에 해당하는 게시글의 목록을 반환-->
     <select id="getCommentList" parameterType="long" resultType="com.ebstudy.board_v3.dto.CommentDTO"
             resultMap="mapCommentDTO">
         SELECT *
@@ -95,7 +99,7 @@
         WHERE post_id = #{postId}
         ORDER BY created_date DESC;
     </select>
-
+    <!--댓글 대상의 postId를 가진 게시글을 저장-->
     <insert id="saveComment" parameterType="com.ebstudy.board_v3.dto.CommentDTO">
         INSERT INTO comments(comment, created_date, post_id)
         VALUES (#{comment}, #{createdDate}, #{postId});
